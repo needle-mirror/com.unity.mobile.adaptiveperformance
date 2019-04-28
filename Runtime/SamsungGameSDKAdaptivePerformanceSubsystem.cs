@@ -66,6 +66,7 @@ namespace UnityEngine.Mobile.AdaptivePerformance
             if (disposing)
             {
                 m_Queue.CompleteAdding();
+                m_Thread.Join();
                 m_Queue.Dispose();
             }
             m_Disposed = true;
@@ -412,14 +413,17 @@ namespace UnityEngine.Mobile.AdaptivePerformance
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void RegisterDescriptor()
         {
-            if (NativeApi.IsAvailable())
+            if (!SystemInfo.deviceModel.StartsWith("samsung", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            if (!NativeApi.IsAvailable())
+                return;
+
+            AdaptivePerformanceSubsystemDescriptor.RegisterDescriptor(new AdaptivePerformanceSubsystemDescriptor.Cinfo
             {
-                AdaptivePerformanceSubsystemDescriptor.RegisterDescriptor(new AdaptivePerformanceSubsystemDescriptor.Cinfo
-                {
-                    id = "SamsungGameSDK",
-                    subsystemImplementationType = typeof(SamsungGameSDKAdaptivePerformanceSubsystem)
-                });
-            }
+                id = "SamsungGameSDK",
+                subsystemImplementationType = typeof(SamsungGameSDKAdaptivePerformanceSubsystem)
+            });
         }
 
         internal class NativeApi : AndroidJavaProxy

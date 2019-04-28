@@ -190,10 +190,6 @@ namespace UnityEngine.Mobile.AdaptivePerformance
                         m_Subsystem = subsystem;
                         break;
                     }
-                    else
-                    {
-                        subsystem.Destroy();
-                    }
                 }
             }
 
